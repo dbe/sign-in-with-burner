@@ -7,22 +7,32 @@ class SignInWithBurner {
 
   openBurner() {
     this.w = popup(this.burnerUrl, 'Sign in with Burner Wallet', 600, 600)
-    console.log('this.w: ', this.w);
   }
 
   receiveMessage(event) {
     if(event.origin === this.burnerUrl) {
       if(event.data === 'loaded') {
         console.log("Burner wallet loaded")
-        this.w.postMessage('pleaseSign:xyz', this.burnerUrl)
+        this.challenge = `xyz${new Date().getTime()}`
+        this.w.postMessage({command: 'sign', challenge: this.challenge, name: "PlasmaDog"}, this.burnerUrl)
+      } else if(event.data.command === 'signed'){
+        console.log('event.data: ', event.data);
+        this.validateSignature(event)
       }
     }
+  }
+
+  //TODO: Actually verify the signature
+  //You have the challenge, the signature, and the public key.
+  //These 3 things can be used to validate ownership
+  validateSignature(event) {
+    document.getElementById('pub').innerHTML = `Signed in as: ${event.data.publicKey}`
+    document.getElementById('signin-button').style.display = 'none'
   }
 }
 
 var signin = new SignInWithBurner()
 const openBurner = signin.openBurner.bind(signin)
-
 
 //From Facebook
 //https://stackoverflow.com/questions/4068373/center-a-popup-window-on-screen
