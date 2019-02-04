@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "browserify src/index.js -o static/js/index.js && node server.js",
     "build": "webpack"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dapparatus": "^1.0.66",
+    "ethers": "^4.0.23",
     "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3"
   }
 }

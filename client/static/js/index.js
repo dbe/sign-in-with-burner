@@ -26,7 +26,7 @@ class SignInWithBurner {
   //You have the challenge, the signature, and the public key.
   //These 3 things can be used to validate ownership
   validateSignature(event) {
-    document.getElementById('pub').innerHTML = `Signed in as: ${event.data.publicKey}`
+    document.getElementById('pub').innerHTML = `Signed in as: ${event.data.address}`
     document.getElementById('signin-button').style.display = 'none'
   }
 }

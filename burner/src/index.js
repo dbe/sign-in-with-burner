@@ -1,5 +1,4 @@
-const dapparatus = require('dapparatus')
-console.log('Dapparatus: ', dapparatus);
+const ethers = require('ethers')
 
 if(window.opener) {
   window.opener.postMessage('loaded', '*')
@@ -29,9 +28,19 @@ function postDetails(event) {
   `
   //TODO: Actuall hook this up
   document.getElementById('confirm').addEventListener('click', function() {
-    let pub = '0x7b96f6b21df98ac41f1b74e72a5f535dd4f52a74'
-    let sig = 'Should actually sign the challenge'
-    event.source.postMessage({command: 'signed', signature: sig, publicKey: pub}, '*')
-    window.close()
+    let pk = localStorage.getItem('metaPrivateKey')
+    console.log('pk: ', pk);
+
+    let wallet = new ethers.Wallet(pk)
+    console.log('wallet: ', wallet);
+
+    wallet.signMessage(`login-with-burner: ${event.data.challenge}`).then(signature => {
+      console.log('signature: ', signature);
+
+      console.log('event.source: ', event.source);
+
+      event.source.postMessage({command: 'signed', signature: signature, address: wallet.address}, '*')
+      // window.close()
+    })
   })
 }
