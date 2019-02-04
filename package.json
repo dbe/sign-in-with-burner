@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start-burner": "browserify burner/src/index.js -o burner/static/js/index.js && node burner/server.js",
-    "start-client": "browserify client/src/index.js -o client/static/js/index.js && node client/server.js"
+    "start": "browserify client/src/index.js -o client/static/js/index.js && node client/server.js"
   },
   "author": "",
   "license": "ISC",
