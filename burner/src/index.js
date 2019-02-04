@@ -1,5 +1,5 @@
-import {Dapparatus} from 'dapparatus';
-console.log('Dapparatus: ', Dapparatus);
+const dapparatus = require('dapparatus')
+console.log('Dapparatus: ', dapparatus);
 
 if(window.opener) {
   window.opener.postMessage('loaded', '*')
