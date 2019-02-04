@@ -34,7 +34,7 @@ function postDetails(event) {
     let wallet = new ethers.Wallet(pk)
     console.log('wallet: ', wallet);
 
-    wallet.signMessage(`login-with-burner: ${event.data.challenge}`).then(signature => {
+    wallet.signMessage(`login-with-burner:${event.data.challenge}`).then(signature => {
       console.log('signature: ', signature);
 
       console.log('event.source: ', event.source);

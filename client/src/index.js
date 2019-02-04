@@ -1,5 +1,4 @@
 class SignInWithBurner {
-
   constructor() {
     this.burnerUrl = 'http://burnerboiz.com:3000'
     window.addEventListener("message", this.receiveMessage.bind(this), false);
@@ -32,7 +31,7 @@ class SignInWithBurner {
 }
 
 var signin = new SignInWithBurner()
-const openBurner = signin.openBurner.bind(signin)
+window.openBurner = signin.openBurner.bind(signin)
 
 //From Facebook
 //https://stackoverflow.com/questions/4068373/center-a-popup-window-on-screen

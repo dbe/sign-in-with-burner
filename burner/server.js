@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-app.use('/static', express.static('static'))
+app.use('/static', express.static('burner/static'))
 
 app.get('/', (req, res) => {
   console.log("Serving index.html")
