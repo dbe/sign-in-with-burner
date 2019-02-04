@@ -7,12 +7,8 @@ if(window.opener) {
 window.addEventListener("message", receiveMessage, false);
 
 function receiveMessage(event) {
-  //Don't bother for same domain SYN and ACK stuff
-  if(event.origin != 'http://localhost:3000') {
-    console.log('event: ', event);
-    if(event.data.command === 'sign') {
-      postDetails(event)
-    }
+  if(event.data && event.data.command === 'sign') {
+    postDetails(event)
   }
 }
 
@@ -29,18 +25,11 @@ function postDetails(event) {
   //TODO: Actuall hook this up
   document.getElementById('confirm').addEventListener('click', function() {
     let pk = localStorage.getItem('metaPrivateKey')
-    console.log('pk: ', pk);
-
     let wallet = new ethers.Wallet(pk)
-    console.log('wallet: ', wallet);
 
     wallet.signMessage(`login-with-burner:${event.data.challenge}`).then(signature => {
-      console.log('signature: ', signature);
-
-      console.log('event.source: ', event.source);
-
       event.source.postMessage({command: 'signed', signature: signature, address: wallet.address}, '*')
-      // window.close()
+      window.close()
     })
   })
 }

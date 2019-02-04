@@ -1,3 +1,5 @@
+const ethers = require('ethers');
+
 class SignInWithBurner {
   constructor() {
     this.burnerUrl = 'http://burnerboiz.com:3000'
@@ -15,18 +17,22 @@ class SignInWithBurner {
         this.challenge = `xyz${new Date().getTime()}`
         this.w.postMessage({command: 'sign', challenge: this.challenge, name: "PlasmaDog"}, this.burnerUrl)
       } else if(event.data.command === 'signed'){
-        console.log('event.data: ', event.data);
         this.validateSignature(event)
       }
     }
   }
 
-  //TODO: Actually verify the signature
-  //You have the challenge, the signature, and the public key.
-  //These 3 things can be used to validate ownership
   validateSignature(event) {
-    document.getElementById('pub').innerHTML = `Signed in as: ${event.data.address}`
-    document.getElementById('signin-button').style.display = 'none'
+    let address = ethers.utils.verifyMessage(`login-with-burner:${this.challenge}`, event.data.signature)
+
+    if(address === event.data.address) {
+      document.getElementById('pub').innerHTML = `Signed in as: ${address}`
+      document.getElementById('signin-button').style.display = 'none'
+      document.getElementById('error').style.display = 'none'
+    } else {
+      document.getElementById('error').innerHTML = `Invalid Signature`
+      document.getElementById('error').style.display = 'block'
+    }
   }
 }
 
