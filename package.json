@@ -9,10 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ethers": "^4.0.23",
-    "express": "^4.16.4"
+    "ethers": "^4.0.23"
   },
   "devDependencies": {
-    "browserify": "^16.2.3"
+    "browserify": "^16.2.3",
+    "express": "^4.16.4"
   }
 }
