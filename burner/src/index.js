@@ -1,3 +1,6 @@
+import {Dapparatus} from 'dapparatus';
+console.log('Dapparatus: ', Dapparatus);
+
 if(window.opener) {
   window.opener.postMessage('loaded', '*')
 }

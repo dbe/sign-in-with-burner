@@ -10,12 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dapparatus": "github:dbe/dapparatus#master",
     "express": "^4.16.4"
-  },
-  "devDependencies": {
-    "terser": "^3.14.1",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1"
   }
 }
