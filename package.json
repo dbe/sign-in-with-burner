@@ -1,11 +1,11 @@
 {
   "name": "sign-in-with-burner",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Let your users sign into your website with the Burner Wallet.",
   "main": "dist/index.js",
   "scripts": {
     "start": "npm run build && node server.js",
-    "build": "browserify src/index.js -o dist/index.js",
+    "build": "browserify src/index.js -o dist/index.js --standalone SignInWithBurner",
     "prepare": "npm run build"
   },
   "author": "David Brian Ethier (dbe) <davidbrianethier@gmail.com>",
