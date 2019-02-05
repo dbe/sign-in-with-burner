@@ -3,3 +3,4 @@ node_modules
 burner/static/js/index.js
 client/static/js/index.js
 build/
+dist/
