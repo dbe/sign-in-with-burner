@@ -2,7 +2,7 @@ const ethers = require('ethers');
 
 class SignInWithBurner {
   constructor() {
-    this.burnerUrl = 'http://burnerboiz.com:3000'
+    this.burnerUrl = 'http://localhost:3000'
     window.addEventListener("message", this.receiveMessage.bind(this), false);
   }
 
