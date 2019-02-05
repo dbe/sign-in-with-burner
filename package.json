@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "npm run build && node server.js",
-    "build": "browserify src/index.js -o dist/index.js"
+    "build": "browserify src/index.js -o dist/index.js",
+    "prepare": "npm run build"
   },
   "author": "David Brian Ethier (dbe) <davidbrianethier@gmail.com>",
   "license": "MIT",
