@@ -1,21 +1,20 @@
 const ethers = require('ethers');
 
 class SignInWithBurner {
-  constructor() {
-    this.burnerUrl = 'http://localhost:3000'
-    window.addEventListener("message", this.receiveMessage.bind(this), false);
-  }
+  constructor(options, resolve, reject) {
+    this.options = options;
+    this.resolve = resolve;
+    this.reject = reject;
 
-  openBurner() {
-    this.w = popup(this.burnerUrl, 'Sign in with Burner Wallet', 600, 600)
+    window.addEventListener("message", this.receiveMessage.bind(this), false);
+    this.w = popup(options.burnerUrl, 'Sign in with Burner Wallet', 600, 600)
   }
 
   receiveMessage(event) {
-    if(event.origin === this.burnerUrl) {
+    if(event.origin === this.options.burnerUrl) {
       if(event.data === 'loaded') {
-        console.log("Burner wallet loaded")
         this.challenge = `xyz${new Date().getTime()}`
-        this.w.postMessage({command: 'sign', challenge: this.challenge, name: "PlasmaDog"}, this.burnerUrl)
+        this.w.postMessage({command: 'sign', challenge: this.challenge, name: this.options.siteName}, this.options.burnerUrl)
       } else if(event.data.command === 'signed'){
         this.validateSignature(event)
       }
@@ -26,18 +25,12 @@ class SignInWithBurner {
     let address = ethers.utils.verifyMessage(`login-with-burner:${this.challenge}`, event.data.signature)
 
     if(address === event.data.address) {
-      document.getElementById('pub').innerHTML = `Signed in as: ${address}`
-      document.getElementById('signin-button').style.display = 'none'
-      document.getElementById('error').style.display = 'none'
+      this.resolve(address);
     } else {
-      document.getElementById('error').innerHTML = `Invalid Signature`
-      document.getElementById('error').style.display = 'block'
+      this.reject("Failed to authenticate.")
     }
   }
 }
-
-var signin = new SignInWithBurner()
-window.openBurner = signin.openBurner.bind(signin)
 
 //From Facebook
 //https://stackoverflow.com/questions/4068373/center-a-popup-window-on-screen
@@ -77,3 +70,21 @@ function popup(url, title, w, h) {
 
   return newWindow;
 }
+
+const DEFAULT_OPTIONS = {
+  burnerUrl: "https://buffiDai.io/login",
+  siteName: "A site"
+}
+
+function signIn(options) {
+  options = Object.assign(DEFAULT_OPTIONS, options)
+  console.log('options: ', options);
+
+  let promise = new Promise( (resolve, reject) => {
+    let manager = new SignInWithBurner(options, resolve, reject)
+  })
+
+  return promise;
+}
+
+module.exports = signIn;
