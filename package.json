@@ -1,13 +1,14 @@
 {
   "name": "sign-in-with-burner",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.1",
+  "description": "Let your users sign into your website with the Burner Wallet.",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "browserify client/src/index.js -o client/static/js/index.js && node client/server.js"
+    "start": "npm run build && node server.js",
+    "build": "browserify src/index.js -o dist/index.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "David Brian Ethier (dbe) <davidbrianethier@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "ethers": "^4.0.23"
   },
