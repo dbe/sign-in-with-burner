@@ -1,4 +1,7 @@
-# Single Sign on using public/private key cryptography with the user's Burner Wallet (xdai.io) private key.
+# Burner Wallet Single Sign On 
+This library provides the ability for your users to single sign on with their burner wallet (xdai.io) identity. Upon clicking the sign in button they will be shown a confirmation page from xdai.io asking if they want to share their burner wallet address with your site. If so, they will share the address as well as a cryptographic signature proving they indeed own the private key for that address.
+
+You can use this functionality instead of requiring spammy email/password combos.
 
 ## Installing
 npm install --save sign-in-with-burner
