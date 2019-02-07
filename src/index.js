@@ -11,7 +11,9 @@ class SignInWithBurner {
   }
 
   receiveMessage(event) {
-    if(event.origin === this.options.burnerUrl) {
+    let origin = new URL(this.options.burnerUrl).origin;
+
+    if(event.origin === origin) {
       if(event.data === 'loaded') {
         this.challenge = `xyz${new Date().getTime()}`
         this.w.postMessage({command: 'sign', challenge: this.challenge, name: this.options.siteName}, this.options.burnerUrl)
@@ -72,14 +74,13 @@ function popup(url, title, w, h) {
 }
 
 const DEFAULT_OPTIONS = {
-  burnerUrl: "https://buffiDai.io/login",
+  burnerUrl: "https://xdai.io/login",
   siteName: "A site"
 }
 
 function signIn(options) {
   options = Object.assign(DEFAULT_OPTIONS, options)
-  console.log('options: ', options);
-
+  
   let promise = new Promise( (resolve, reject) => {
     let manager = new SignInWithBurner(options, resolve, reject)
   })
