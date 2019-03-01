@@ -14,27 +14,13 @@ class SignInWithBurner {
   }
 
   receiveMessage(event) {
-    console.log('event: ', event);
-
     let request = this.eventToRequest(event);
-    console.log('request: ', request);
 
     if(request.action === 'login') {
       this.handleLogin(request, event);
     } else if(request.action === 'sign') {
       this.handleSign(request, event);
     }
-
-
-    //   //LOGIN SUCCESS
-    //   } else if(event.data.topic === 'login:success'){
-    //     this.validateSignature(event)
-    //
-    //   //SIGN SUCCESS
-    //   } else if(event.data.topic ===) {
-    //
-    //   }
-    // }
   }
 
   handleLogin(request, event) {
@@ -58,7 +44,21 @@ class SignInWithBurner {
   }
 
   handleSign(request, event) {
+    if(event.data.topic === 'loaded') {
+      let message = {
+        topic: 'sign',
+        tx: request.tx,
+        name: request.options.siteName
+      }
 
+      request.source.postMessage(message, request.options.burnerUrl);
+
+    // Logged in
+    }  else if(event.data.topic === 'sign:success') {
+      console.log("Got signed tx");
+      console.log('event.data: ', event.data);
+      request.resolve(event.data.signed);
+    }
   }
 
   //Returns correct request given the incoming event.
@@ -160,9 +160,6 @@ function login(options) {
 }
 
 function sign(tx, options) {
-  console.log('tx: ', tx);
-  console.log('options: ', options);
-
   options = Object.assign(DEFAULT_OPTIONS, options)
 
   let promise = new Promise( (resolve, reject) => {
@@ -173,7 +170,8 @@ function sign(tx, options) {
       source: w,
       tx,
       resolve,
-      reject
+      reject,
+      options
     })
   })
 
