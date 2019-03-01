@@ -1,35 +1,95 @@
 const ethers = require('ethers');
 
-class SignInWithBurner {
-  constructor(options, resolve, reject) {
-    this.options = options;
-    this.resolve = resolve;
-    this.reject = reject;
+//Data Structure of communication:
 
+// {
+//   topic: Required: 'loaded', 'login', 'login:success', 'sign', 'sign:success'
+//   ...topicSpecificKeys:
+// }
+
+class SignInWithBurner {
+  constructor() {
     window.addEventListener("message", this.receiveMessage.bind(this), false);
-    this.w = popup(options.burnerUrl, 'Sign in with Burner Wallet', 600, 600)
+    this.requests = []
   }
 
   receiveMessage(event) {
-    let origin = new URL(this.options.burnerUrl).origin;
+    console.log('event: ', event);
 
-    if(event.origin === origin) {
-      if(event.data === 'loaded') {
-        this.challenge = `xyz${new Date().getTime()}`
-        this.w.postMessage({command: 'sign', challenge: this.challenge, name: this.options.siteName}, this.options.burnerUrl)
-      } else if(event.data.command === 'signed'){
-        this.validateSignature(event)
+    let request = this.eventToRequest(event);
+    console.log('request: ', request);
+
+    if(request.action === 'login') {
+      this.handleLogin(request, event);
+    } else if(request.action === 'sign') {
+      this.handleSign(request, event);
+    }
+
+
+    //   //LOGIN SUCCESS
+    //   } else if(event.data.topic === 'login:success'){
+    //     this.validateSignature(event)
+    //
+    //   //SIGN SUCCESS
+    //   } else if(event.data.topic ===) {
+    //
+    //   }
+    // }
+  }
+
+  handleLogin(request, event) {
+    //LOADED
+    if(event.data.topic === 'loaded') {
+      let challenge = `xyz${new Date().getTime()}`
+      let message = {
+        topic: 'login',
+        challenge: challenge,
+        name: request.options.siteName
       }
+
+      request.challenge = challenge;
+
+      request.source.postMessage(message, request.options.burnerUrl);
+
+    // Logged in
+    }  else if(event.data.topic === 'login:success') {
+      this.validateSignature(request, event);
     }
   }
 
-  validateSignature(event) {
-    let address = ethers.utils.verifyMessage(`login-with-burner:${this.challenge}`, event.data.signature)
+  handleSign(request, event) {
+
+  }
+
+  //Returns correct request given the incoming event.
+  //Validates that the event corresponds with a valid request
+  eventToRequest(event) {
+    let request = this.requests.find(req => req.source === event.source);
+
+    if(!request) {
+      throw("Could not find request for given popup");
+    }
+
+    let origin = new URL(request.options.burnerUrl).origin;
+
+    if(event.origin !== origin) {
+      throw("Wrong origin")
+    }
+
+    if(!event.data) {
+      throw("Malformed message from burner wallet.")
+    }
+
+    return request;
+  }
+
+  validateSignature(request, event) {
+    let address = ethers.utils.verifyMessage(`login-with-burner:${request.challenge}`, event.data.signature)
 
     if(address === event.data.address) {
-      this.resolve(address);
+      request.resolve(address);
     } else {
-      this.reject("Failed to authenticate.")
+      request.reject("Failed to authenticate.")
     }
   }
 }
@@ -73,19 +133,54 @@ function popup(url, title, w, h) {
   return newWindow;
 }
 
+//Singleton manager
+const manager = new SignInWithBurner();
+
 const DEFAULT_OPTIONS = {
   burnerUrl: "https://xdai.io/login",
   siteName: "A site"
 }
 
-function signIn(options) {
+function login(options) {
   options = Object.assign(DEFAULT_OPTIONS, options)
-  
+
   let promise = new Promise( (resolve, reject) => {
-    let manager = new SignInWithBurner(options, resolve, reject)
+    let w = popup(options.burnerUrl, 'Sign in with Burner Wallet', 600, 600)
+
+    manager.requests.push({
+      action: 'login',
+      source: w,
+      resolve,
+      reject,
+      options
+    })
   })
 
   return promise;
 }
 
-module.exports = signIn;
+function sign(tx, options) {
+  console.log('tx: ', tx);
+  console.log('options: ', options);
+
+  options = Object.assign(DEFAULT_OPTIONS, options)
+
+  let promise = new Promise( (resolve, reject) => {
+    let w = popup(options.burnerUrl, 'Sign in with Burner Wallet', 600, 600)
+
+    manager.requests.push({
+      action: 'sign',
+      source: w,
+      tx,
+      resolve,
+      reject
+    })
+  })
+
+  return promise;
+}
+
+module.exports = {
+  login,
+  sign
+};
