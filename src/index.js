@@ -55,8 +55,6 @@ class SignInWithBurner {
 
     // Logged in
     }  else if(event.data.topic === 'sign:success') {
-      console.log("Got signed tx");
-      console.log('event.data: ', event.data);
       request.resolve(event.data.signed);
     }
   }
